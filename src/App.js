@@ -10,9 +10,17 @@ function App() {
     <Router>
       <Routes>
         <Route
-          path="/"element={username?(<div>Hello, {username}!</div>):(<Navigate to="/login" replace />)}/>
-        <Route path="/login"element={username ? (<Navigate to="/" replace />) : (<Login />)}/>
-        <Route path ="/dashboard" element={<Dashboard/>}/>
+          path="/"
+          element={username ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/login"
+          element={username ? <Navigate to="/dashboard" replace /> : <Login />}
+        />
+        <Route
+          path="/dashboard"
+          element={username ? <Dashboard /> : <Navigate to="/login" replace />}
+        />
       </Routes>
     </Router>
   );

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './Dashboard.css';
+import {
+  Container,
+  Form,
+  FilterBar,
+  TaskItem
+} from '../StyleComponents/DashboardStyles.js';
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -17,6 +22,7 @@ function Dashboard() {
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
+    console.log(localStorage.getItem('tasks'))
   }, [tasks]);
 
   const addTask = (e) => {
@@ -54,10 +60,12 @@ function Dashboard() {
     setDescription(task.description);
   };
 
-  const saveEdit = (id) => {
+  const saveEdit = (e) => {
+    e.preventDefault();
+    if (!title.trim()) return;
     setTasks(
       tasks.map((task) =>
-        task.id === id ? { ...task, title, description } : task
+        task.id === editingTaskId ? { ...task, title, description } : task
       )
     );
     setEditingTaskId(null);
@@ -84,10 +92,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard">
+    <Container>
       <h1>Task Dashboard</h1>
 
-      <form onSubmit={editingTaskId ? () => saveEdit(editingTaskId) : addTask} className="task-form">
+      <Form onSubmit={editingTaskId ? saveEdit : addTask}>
         <input
           type="text"
           placeholder="Title (required)"
@@ -101,42 +109,42 @@ function Dashboard() {
           onChange={(e) => setDescription(e.target.value)}
         />
         <button type="submit">{editingTaskId ? 'Save' : 'Add Task'}</button>
-        {editingTaskId && <button onClick={cancelEdit} type="button">Cancel</button>}
-      </form>
+        {editingTaskId && (
+          <button type="button" onClick={cancelEdit}>
+            Cancel
+          </button>
+        )}
+      </Form>
 
-      <div className="filters">
-        <button onClick={() => setFilter('all')}>
-          All ({countByStatus('all')})
-        </button>
+      <FilterBar>
+        <button onClick={() => setFilter('all')}>All ({countByStatus('all')})</button>
         <button onClick={() => setFilter('completed')}>
           Completed ({countByStatus('completed')})
         </button>
         <button onClick={() => setFilter('pending')}>
           Pending ({countByStatus('pending')})
         </button>
-      </div>
+      </FilterBar>
 
-      <ul className="task-list">
-        {filteredTasks.map((task) => (
-          <li key={task.id} className={task.completed ? 'completed' : ''}>
-            <div className="task-header">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleComplete(task.id)}
-              />
-              <span className="task-title">{task.title}</span>
-              <div className="task-actions">
-                <button onClick={() => startEditing(task)}>Edit</button>
-                <button onClick={() => deleteTask(task.id)}>Delete</button>
-              </div>
+      {filteredTasks.map((task) => (
+        <TaskItem key={task.id} completed={task.completed}>
+          <div className="task-header">
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => toggleComplete(task.id)}
+            />
+            <span className="task-title">{task.title}</span>
+            <div className="task-actions">
+              <button onClick={() => startEditing(task)}>Edit</button>
+              <button onClick={() => deleteTask(task.id)}>Delete</button>
             </div>
-            {task.description && <p className="task-desc">{task.description}</p>}
-            <small className="task-time">{task.createdAt}</small>
-          </li>
-        ))}
-      </ul>
-    </div>
+          </div>
+          {task.description && <p className="task-desc">{task.description}</p>}
+          <small className="task-time">{task.createdAt}</small>
+        </TaskItem>
+      ))}
+    </Container>
   );
 }
 
