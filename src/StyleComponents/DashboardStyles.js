@@ -77,8 +77,7 @@ export const FilterBar = styled.div`
 `;
 
 export const TaskItem = styled.li`
-  background-color: ${({ completed }) => (completed ? '#d4ffd4' : '#fff')};
-  border: 1px solid #ccc;
+  background-color: ${({ $completed }) => ($completed ? '#f0f0f0' : '#fff')};  border: 1px solid #ccc;
   padding: 14px;
   border-left: 5px solid ${({ completed }) => (completed ? 'green' : 'gray')};
   border-radius: 8px;

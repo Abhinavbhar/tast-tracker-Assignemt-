@@ -14,37 +14,39 @@ function Dashboard() {
   const [editingTaskId, setEditingTaskId] = useState(null);
 
   useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
+    const storedTasks = (localStorage.getItem('tasks'));
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    console.log(localStorage.getItem('tasks'))
-  }, [tasks]);
 
-  const addTask = (e) => {
+  const addTask =async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
     const newTask = {
       id: Date.now(),
       title,
       description,
-      completed: false,
       createdAt: new Date().toLocaleString(),
     };
-    setTasks([newTask, ...tasks]);
+      const updatedTasks = [newTask, ...tasks];
+  setTasks(updatedTasks);
+  
+  
+    localStorage.setItem('tasks',JSON.stringify(updatedTasks))
     setTitle('');
     setDescription('');
   };
 
-  const deleteTask = (id) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      setTasks(tasks.filter((task) => task.id !== id));
-    }
-  };
+const deleteTask = (id) => {
+  if (window.confirm('Are you sure you want to delete this task?')) {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  }
+};
+
 
   const toggleComplete = (id) => {
     setTasks(
